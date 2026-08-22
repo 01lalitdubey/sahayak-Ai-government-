@@ -1,280 +1,219 @@
-# Sahayak AI
+# Sahayak AI (सहायक AI)
 
-**A multilingual AI assistant that helps rural citizens discover Indian government schemes, check eligibility, and understand their benefits — in their own language.**
-
----
-
-## Project Overview
-
-Sahayak AI bridges the information gap between India's welfare programmes and the citizens who need them most.
-
-| Phase | Status | Description |
-|-------|--------|-------------|
-| Phase 1 | ✅ Complete | Project foundation — Next.js + FastAPI scaffold |
-| Phase 2 | ✅ Complete | PostgreSQL database layer — models, repos, schemas, migration |
-| Phase 3 | ⏳ Planned | Auth, scheme CRUD, eligibility engine |
-| Phase 4 | ⏳ Planned | AI/RAG pipeline, multilingual chat |
-| Phase 5 | ⏳ Planned | Admin panel, analytics |
+**A Multilingual AI Assistant that helps rural Indian citizens discover government welfare schemes, evaluate eligibility, and understand their benefits — in their own language.**
 
 ---
 
-## Technology Stack
+## 📌 Project Overview
+
+**Sahayak AI** bridges the information gap between India's welfare programmes and the citizens who need them most. It provides automated scheme discovery, deterministic rule-based eligibility evaluation, personalized AI recommendations, and multilingual support across Indian regional languages.
+
+| Milestone / Component | Status | Description |
+|-----------------------|--------|-------------|
+| **Core Architecture & Scaffolding** | ✅ Complete | Next.js 15 App Router + FastAPI async backend |
+| **PostgreSQL & Database Layer** | ✅ Complete | Async SQLAlchemy 2.0, asyncpg, Alembic migrations, Repositories |
+| **Auth & Profile Management** | ✅ Complete | JWT Auth, RBAC, User Profiles with strict validation |
+| **Scheme Ingestion & Management** | ✅ Complete | Government data import pipeline (data.gov.in / myScheme), Admin CRUD |
+| **Standalone Schema & Ingestion Suite** | ✅ Complete | `schemas.py`, `api_loader.py`, `filter_engine.py` (Pydantic v2) |
+| **Eligibility & Recommendation Engine** | ✅ Complete | Deterministic rule matching engine + smart profile-based recommendations |
+| **Translation & Localization (TMS)** | ✅ Complete | Translation Management System + IndicTransToolkit support |
+| **Citizen & Admin Portals** | ✅ Complete | Localized citizen web app & administrative analytics dashboard |
+
+---
+
+## 🏗️ Technology Stack
 
 ### Frontend
-| Tool | Version | Purpose |
-|------|---------|---------|
-| Next.js | 15.1.0 | App Router, SSR |
-| React | 19.0.0 | UI library |
-| TypeScript | 5.x strict | Type safety |
-| Tailwind CSS | 3.x | Styling |
-| shadcn/ui | latest | Accessible components |
-| Zustand | 5.x | State management |
-| TanStack Query | 5.x | Server state |
-| Axios | 1.x | HTTP client |
-| React Hook Form + Zod | latest | Forms & validation |
-| Framer Motion | 11.x | Animations |
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| **Next.js** | 15.1.0 | React Framework (App Router, Server Components) |
+| **React** | 19.0.0 | Component UI library |
+| **TypeScript** | 5.x | Strict type safety |
+| **Tailwind CSS** | 3.x | Utility-first styling & responsiveness |
+| **shadcn/ui & Radix** | Latest | Accessible UI components |
+| **Zustand** | 5.x | Client state management |
+| **TanStack Query** | 5.x | Server state & API data caching |
+| **Axios** | 1.x | HTTP client with interceptors |
+| **Framer Motion** | 11.x | Smooth UI animations |
 
 ### Backend
-| Tool | Version | Purpose |
-|------|---------|---------|
-| Python | 3.12 | Runtime |
-| FastAPI | 0.115.5 | ASGI web framework |
-| SQLAlchemy | 2.0.36 | Async ORM |
-| asyncpg | 0.30.0 | Async PostgreSQL driver |
-| Alembic | 1.14.0 | Database migrations |
-| Pydantic v2 | 2.10.3 | Validation & settings |
-| Uvicorn | 0.32.1 | ASGI server |
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| **Python** | 3.12+ | Core runtime |
+| **FastAPI** | 0.115.5 | High-performance async ASGI web framework |
+| **Pydantic v2** | 2.10.3 | Strict data validation & schema contracts |
+| **SQLAlchemy** | 2.0.36 | Async ORM (AsyncSession, select, DeclarativeBase) |
+| **asyncpg** | 0.30.0 | High-speed async PostgreSQL driver |
+| **Alembic** | 1.14.0 | Database migration manager |
+| **httpx** | 0.28.1 | Async & sync HTTP client for API ingestion |
+| **Uvicorn** | 0.32.1 | ASGI server |
 
 ---
 
-## Folder Structure
+## 📂 Repository Structure
 
 ```
-sahayak-ai/
-├── frontend/                    # Next.js 15 application
+craftncode2/
+├── frontend/                          # Next.js 15 Web Application
 │   └── src/
-│       ├── app/                 # App Router pages
-│       ├── components/          # UI + layout components
-│       ├── hooks/               # TanStack Query hooks
-│       ├── services/            # Axios API service modules
-│       ├── store/               # Zustand slices
-│       ├── lib/                 # Utilities, constants, axios config
-│       └── types/               # TypeScript interfaces
+│       ├── app/[locale]/              # Localized App Router pages
+│       │   ├── login/ & register/     # Authentication pages
+│       │   ├── dashboard/             # Citizen dashboard
+│       │   ├── profile/               # Citizen demographic profile
+│       │   ├── schemes/               # Scheme catalog & details
+│       │   ├── eligibility/           # Interactive eligibility check
+│       │   ├── recommendations/       # AI scheme recommendations
+│       │   ├── chat/                  # Multilingual assistant chat
+│       │   └── admin/                 # Admin suite (schemes, users, TMS, analytics)
+│       ├── components/                # Reusable UI & layout components
+│       ├── hooks/                     # Custom TanStack Query hooks
+│       ├── services/                  # Axios API services
+│       ├── store/                     # Zustand store slices
+│       └── types/                     # TypeScript interfaces
 │
-├── backend/                     # FastAPI application
+├── backend/                           # FastAPI Application & Services
 │   ├── app/
-│   │   ├── main.py              # App factory, middleware, exception handlers
-│   │   ├── api/v1/
-│   │   │   ├── router.py        # Central v1 router
-│   │   │   └── endpoints/
-│   │   │       └── database.py  # GET /api/v1/database/health
-│   │   ├── core/
-│   │   │   ├── config.py        # Pydantic Settings (env-driven)
-│   │   │   ├── exceptions.py    # Custom exception hierarchy
-│   │   │   ├── exception_handlers.py  # FastAPI exception → JSON
-│   │   │   └── logging.py       # Structured logging
-│   │   ├── database/
-│   │   │   └── database.py      # Async engine, session, check_db_connection()
-│   │   ├── models/
-│   │   │   ├── enums.py         # All SQLAlchemy / Pydantic enums
-│   │   │   ├── user.py          # User ORM model
-│   │   │   ├── profile.py       # Profile ORM model (1:1 with User)
-│   │   │   ├── scheme.py        # Scheme ORM model
-│   │   │   ├── eligibility_rule.py  # EligibilityRule (many per Scheme)
-│   │   │   └── chat_history.py  # ChatHistory ORM model
-│   │   ├── repositories/
-│   │   │   ├── base.py          # BaseRepository[T] — generic CRUD
-│   │   │   ├── user_repository.py
-│   │   │   ├── profile_repository.py
-│   │   │   ├── scheme_repository.py
-│   │   │   ├── eligibility_repository.py
-│   │   │   └── chat_repository.py
-│   │   ├── schemas/             # Pydantic v2 request/response contracts
-│   │   ├── services/            # Business logic (populated Phase 3+)
-│   │   ├── middleware/          # Request logger
-│   │   └── utils/               # Response helpers
-│   ├── alembic/
-│   │   ├── env.py               # Async Alembic config
-│   │   ├── script.py.mako       # Migration template
-│   │   └── versions/
-│   │       └── 0001_initial_schema.py  # First migration
-│   ├── tests/
-│   │   └── test_database.py     # 26 tests — all passing
-│   ├── pytest.ini
-│   ├── requirements.txt
-│   └── .env.example
+│   │   ├── main.py                    # App factory, middleware, CORS & error handlers
+│   │   ├── api/v1/endpoints/          # API route controllers
+│   │   │   ├── auth.py                # Authentication & JWT tokens
+│   │   │   ├── schemes.py             # Scheme discovery & filtering
+│   │   │   ├── eligibility.py         # Eligibility evaluation endpoints
+│   │   │   ├── recommendations.py     # Scheme recommendations
+│   │   │   ├── government_import.py   # data.gov.in ingestion API
+│   │   │   ├── admin_*.py             # Admin users, schemes, TMS & analytics
+│   │   │   └── database.py            # DB health checks
+│   │   ├── models/                    # SQLAlchemy ORM models & enums
+│   │   ├── repositories/              # Async database repository pattern
+│   │   ├── schemas/                   # Pydantic v2 request & response schemas
+│   │   └── services/                  # Business logic (rule engine, auth, TMS, etc.)
+│   ├── alembic/                       # Database migrations
+│   └── requirements.txt               # Backend dependencies
 │
-├── docker/
-│   ├── Dockerfile.frontend
-│   └── Dockerfile.backend
-├── docker-compose.yml
-├── docs/
-│   └── ARCHITECTURE.md
-└── scripts/
-    ├── setup.ps1
-    ├── setup.sh
-    └── validate_app.py
+├── schemas.py                         # Standalone Pydantic v2 schemas & enums
+├── api_loader.py                      # Standalone external API ingestion & normalizer
+├── filter_engine.py                   # Standalone deterministic eligibility filter engine
+├── docker/                            # Dockerfiles & container assets
+├── docs/                              # Architecture specs & project reports
+├── scripts/                           # Setup and validation scripts
+├── start.ps1                          # One-click startup script (PowerShell)
+└── docker-compose.yml                 # Full-stack container orchestration
 ```
 
 ---
 
-## Installation
+## ⚡ Standalone Core Processing Modules
+
+The root directory provides modular, self-contained Python modules for ingestion, validation, and deterministic filtering:
+
+### 1. `schemas.py`
+Defines standard domain enums and Pydantic v2 models:
+- **Enums**: `Gender`, `SocialCategory`, `Occupation`, `Education`, `FarmerStatus`, `MaritalStatus`.
+- **`UserProfile`**: Validates citizen profiles with boundary constraints (`0 <= age <= 120`, `annual_income >= 0`, `is_disabled`, `disability_type`, `disability_percentage`).
+- **`SchemeEligibilityRules`**: Handles criteria ranges and wildcards (`None` / `'any'`).
+- **`SchemeRecord`**: Parses and normalizes incoming external scheme payloads (both flat and nested).
+
+### 2. `api_loader.py`
+Fetches and normalizes scheme records from external government / portal APIs:
+- **`fetch_and_normalize_schemes(api_url, headers, timeout, skip_invalid)`** (Sync)
+- **`async_fetch_and_normalize_schemes(api_url, headers, timeout, skip_invalid)`** (Async)
+- Resilient error handling (`APITimeoutError`, `APINetworkError`, `APIMalformedPayloadError`).
+- Dynamic field alias mapping, currency string cleanup, and wildcard normalization.
+
+### 3. `filter_engine.py`
+Executes deterministic boolean evaluation across all criteria:
+- **`filter_eligible(profile: UserProfile, schemes: list[SchemeRecord]) -> list[SchemeRecord]`**
+- Evaluates age boundaries, income ceilings, occupation lists, farmer status, gender, state, and disability requirements.
+- Missing/null profile attributes are treated as **non-disqualifying** (plausible match).
+
+---
+
+## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js 22+
-- Python 3.12+
-- PostgreSQL 15 or 16
-- Git
+- **Python 3.12+**
+- **Node.js 20+**
+- **PostgreSQL 15+** (or Docker)
 
 ---
 
-## PostgreSQL Setup
-
-### Option A — Install locally (Windows)
-```
-1. Download from https://www.postgresql.org/download/windows/
-2. Install with default settings, remember the postgres superuser password
-3. Open pgAdmin or psql
-```
-
-### Option B — Docker (recommended)
-```bash
-docker run -d \
-  --name sahayak_postgres \
-  -e POSTGRES_USER=sahayak \
-  -e POSTGRES_PASSWORD=sahayak_password \
-  -e POSTGRES_DB=sahayak_db \
-  -p 5432:5432 \
-  postgres:16-alpine
-```
-
-### Create the database (if installing locally)
-```sql
--- Run in psql as superuser
-CREATE USER sahayak WITH PASSWORD 'sahayak_password';
-CREATE DATABASE sahayak_db OWNER sahayak;
-GRANT ALL PRIVILEGES ON DATABASE sahayak_db TO sahayak;
-```
-
----
-
-## Running the Backend
+### 1. Backend Setup
 
 ```bash
 cd backend
 
-# 1. Create virtual environment
+# Create & activate virtual environment
 python -m venv .venv
-.venv\Scripts\Activate.ps1        # Windows
-# source .venv/bin/activate        # Linux/macOS
+# Windows PowerShell:
+.venv\Scripts\Activate.ps1
+# Linux / macOS:
+# source .venv/bin/activate
 
-# 2. Install dependencies
+# Install dependencies
 pip install -r requirements.txt
 
-# 3. Configure environment
+# Configure environment variables
 cp .env.example .env
-# Edit .env — set DATABASE_URL to your PostgreSQL connection
 
-# 4. Run migrations (requires PostgreSQL to be running)
+# Run database migrations
 alembic upgrade head
 
-# 5. Start development server
+# Start development server
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-API is available at:
-| URL | Purpose |
-|-----|---------|
-| http://localhost:8000/ | Root — welcome JSON |
-| http://localhost:8000/health | App health check |
-| http://localhost:8000/api/v1/database/health | DB connectivity check |
-| http://localhost:8000/docs | Swagger UI |
-| http://localhost:8000/redoc | ReDoc |
+Interactive API documentation will be available at:
+- **Swagger UI**: [http://localhost:8000/docs](http://localhost:8000/docs)
+- **ReDoc**: [http://localhost:8000/redoc](http://localhost:8000/redoc)
+- **Health Check**: [http://localhost:8000/health](http://localhost:8000/health)
 
 ---
 
-## Database Migrations
-
-```bash
-cd backend
-
-# Apply all pending migrations
-alembic upgrade head
-
-# Check current migration version
-alembic current
-
-# Show migration history
-alembic history --verbose
-
-# Generate a new migration after model changes
-alembic revision --autogenerate -m "describe your change here"
-
-# Rollback one migration
-alembic downgrade -1
-
-# Rollback ALL migrations (wipes schema)
-alembic downgrade base
-```
-
-### Migration workflow for new models
-```
-1. Edit or create a file in app/models/
-2. Import it in app/models/__init__.py
-3. Run: alembic revision --autogenerate -m "add my_model"
-4. Review the generated file in alembic/versions/
-5. Run: alembic upgrade head
-```
-
----
-
-## Running the Frontend
+### 2. Frontend Setup
 
 ```bash
 cd frontend
 
-# Install dependencies
+# Install packages
 npm install
 
 # Configure environment
-copy .env.example .env.local
-# Edit .env.local — set NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
+cp .env.example .env.local
 
-# Start development server
+# Run Next.js development server
 npm run dev
 ```
 
-Open http://localhost:3000
+Visit the citizen portal at **[http://localhost:3000](http://localhost:3000)**.
 
 ---
 
-## Running Tests
+### 3. Running with Docker Compose
+
+To start the full stack (PostgreSQL, FastAPI Backend, Next.js Frontend) with a single command:
 
 ```bash
-cd backend
-.venv\Scripts\pytest tests/ -v
-```
-
-Expected output: **26 passed**
-
----
-
-## Running with Docker (full stack)
-
-```bash
-# From sahayak-ai/ root
 docker compose up --build
 ```
 
-| Service | URL |
-|---------|-----|
-| Frontend | http://localhost:3000 |
-| Backend | http://localhost:8000 |
-| PostgreSQL | localhost:5432 |
+---
+
+## 🧪 Testing
+
+### Backend & Unit Tests
+```bash
+# Run standalone module self-tests
+python schemas.py
+python api_loader.py
+python filter_engine.py
+
+# Run FastAPI backend test suite
+cd backend
+pytest -v
+```
 
 ---
 
-## Environment Variables
+## 🔒 Environment Configuration
 
 ### Backend (`backend/.env`)
 ```env
@@ -284,9 +223,8 @@ DATABASE_URL=postgresql+asyncpg://sahayak:sahayak_password@localhost:5432/sahaya
 DATABASE_ECHO=false
 DB_POOL_SIZE=10
 DB_MAX_OVERFLOW=20
-DB_POOL_TIMEOUT=30
-DB_POOL_RECYCLE=1800
-SECRET_KEY=generate-with-python-secrets-module
+SECRET_KEY=your-secure-random-secret-key
+ACCESS_TOKEN_EXPIRE_MINUTES=1440
 ```
 
 ### Frontend (`frontend/.env.local`)
@@ -297,18 +235,15 @@ NEXT_PUBLIC_APP_NAME=Sahayak AI
 
 ---
 
-## Future Phases
+## 📄 Documentation
 
-| Phase | Features |
-|-------|---------|
-| **Phase 3** | JWT auth, user registration/login, scheme CRUD API, eligibility check |
-| **Phase 4** | RAG pipeline (pgvector), multilingual LLM chat (Hindi, Tamil, Telugu…) |
-| **Phase 5** | Admin panel, analytics, scheme data ingestion |
-| **Phase 6** | PWA, offline support, voice input, SMS fallback |
+For in-depth documentation, refer to the [`docs/`](file:///D:/vsc/craftncode2/docs) folder:
+- [**ARCHITECTURE.md**](file:///D:/vsc/craftncode2/docs/ARCHITECTURE.md): System architecture and data flow.
+- [**FULL_PROJECT_REPORT.md**](file:///D:/vsc/craftncode2/docs/FULL_PROJECT_REPORT.md): Comprehensive project implementation report.
+- [**MASTER_PROJECT_REPORT.md**](file:///D:/vsc/craftncode2/docs/MASTER_PROJECT_REPORT.md): Master technical specifications and evaluation metrics.
 
 ---
 
-## License
+## 📜 License
 
-MIT © Sahayak AI Team
-"# craftncode2" 
+Distributed under the **MIT License**. See `LICENSE` for more information.
