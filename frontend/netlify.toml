@@ -10,3 +10,9 @@
 [build.environment]
   NODE_VERSION = "20"
   NEXT_USE_NETLIFY_EDGE = "false"
+
+[[redirects]]
+  from = "/api/v1/*"
+  to = "https://sahayak-ai-government.onrender.com/api/v1/:splat"
+  status = 200
+  force = true

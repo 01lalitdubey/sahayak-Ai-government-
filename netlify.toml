@@ -12,10 +12,9 @@
   NODE_VERSION = "20"
   NEXT_USE_NETLIFY_EDGE = "false"
 
-# Optional proxy for backend API requests to prevent CORS issues in production:
-# Replace https://your-backend-service.onrender.com with your deployed backend URL.
-# [[redirects]]
-#   from = "/api/v1/*"
-#   to = "https://your-backend-service.onrender.com/api/v1/:splat"
-#   status = 200
-#   force = true
+# Optional proxy for backend API requests (prevents all CORS issues):
+[[redirects]]
+  from = "/api/v1/*"
+  to = "https://sahayak-ai-government.onrender.com/api/v1/:splat"
+  status = 200
+  force = true
