@@ -1,0 +1,80 @@
+# ========================
+# Sahayak AI — .gitignore
+# ========================
+
+# ---- Node / Frontend ----
+node_modules/
+.next/
+out/
+dist/
+build/
+.npm
+*.tsbuildinfo
+next-env.d.ts
+
+# ---- Python / Backend ----
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+.venv/
+venv/
+env/
+ENV/
+.Python
+pip-log.txt
+pip-delete-this-directory.txt
+
+# ---- Environment Variables ----
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+!.env.example
+
+# ---- Database ----
+*.db
+*.sqlite3
+
+# ---- IDE / Editors ----
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ---- Docker ----
+docker-compose.override.yml
+
+# ---- Logs ----
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ---- Testing ----
+coverage/
+.coverage
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+
+# ---- Alembic ----
+# Keep migrations tracked — do not ignore
+
+# ---- Misc ----
+*.bak
+*.tmp
+.cache/
+
+backend/models/
+*.whl

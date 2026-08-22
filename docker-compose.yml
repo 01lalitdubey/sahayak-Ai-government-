@@ -1,0 +1,90 @@
+# ============================================================
+# Sahayak AI — Docker Compose
+# Services: frontend · backend · postgres
+# Usage:
+#   docker compose up --build
+#   docker compose down -v  (removes volumes too)
+# ============================================================
+
+version: "3.9"
+
+services:
+
+  # ── PostgreSQL Database ─────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: sahayak_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-sahayak}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-sahayak_password}
+      POSTGRES_DB: ${POSTGRES_DB:-sahayak_db}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-sahayak} -d ${POSTGRES_DB:-sahayak_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - sahayak_net
+
+  # ── FastAPI Backend ─────────────────────────────────────────────────────
+  backend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.backend
+    container_name: sahayak_backend
+    restart: unless-stopped
+    environment:
+      APP_NAME: ${APP_NAME:-Sahayak AI}
+      APP_VERSION: ${APP_VERSION:-0.1.0}
+      APP_ENV: ${APP_ENV:-development}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      SECRET_KEY: ${SECRET_KEY:-change-me-in-production}
+      ALGORITHM: ${ALGORITHM:-HS256}
+      ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES:-30}
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-sahayak}:${POSTGRES_PASSWORD:-sahayak_password}@postgres:5432/${POSTGRES_DB:-sahayak_db}
+      ALLOWED_ORIGINS: '["http://localhost:3000","http://frontend:3000"]'
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - sahayak_net
+    volumes:
+      # Mount source for hot-reload in development
+      - ./backend:/app
+
+  # ── Next.js Frontend ────────────────────────────────────────────────────
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.frontend
+      args:
+        NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://localhost:8000}
+        NEXT_PUBLIC_APP_NAME: ${NEXT_PUBLIC_APP_NAME:-Sahayak AI}
+        NEXT_PUBLIC_APP_VERSION: ${NEXT_PUBLIC_APP_VERSION:-0.1.0}
+    container_name: sahayak_frontend
+    restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://localhost:8000}
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - sahayak_net
+
+# ── Volumes ────────────────────────────────────────────────────────────────
+volumes:
+  postgres_data:
+    driver: local
+
+# ── Networks ───────────────────────────────────────────────────────────────
+networks:
+  sahayak_net:
+    driver: bridge

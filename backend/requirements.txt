@@ -1,0 +1,40 @@
+# ============================================================
+# Sahayak AI — Python Backend Dependencies
+# Pinned to exact versions for reproducible builds.
+# ============================================================
+
+# ── Web Framework ─────────────────────────────────────────────
+fastapi==0.115.5
+uvicorn[standard]==0.32.1
+
+# ── Database ──────────────────────────────────────────────────
+sqlalchemy==2.0.36
+asyncpg==0.30.0
+alembic==1.14.0
+
+# ── Validation & Settings ─────────────────────────────────────
+pydantic==2.10.3
+pydantic-settings==2.6.1
+
+# ── Environment ───────────────────────────────────────────────
+python-dotenv==1.0.1
+
+# ── Security (auth Phase 2) ───────────────────────────────────
+passlib[bcrypt]==1.7.4
+python-jose[cryptography]==3.3.0
+python-multipart==0.0.12
+
+# ── HTTP Client ───────────────────────────────────────────────
+httpx==0.28.1
+
+# ── Dev / Testing ─────────────────────────────────────────────
+pytest==8.3.4
+pytest-asyncio==0.24.0
+
+# ── AI / Translation ──────────────────────────────────────────
+torch==2.5.1
+transformers==4.47.1
+sentencepiece==0.2.0
+huggingface-hub==0.27.0
+accelerate==1.2.1
+
