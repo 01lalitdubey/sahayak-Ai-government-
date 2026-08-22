@@ -6,15 +6,30 @@ dependency-injected datastore, and error handling.
 """
 
 import json
+import os
+import sys
 import unittest
-from router import (
-    DEFAULT_SCHEMES_CATALOG,
-    RecommendationResponse,
-    UserProfile,
-    get_recommendations,
-    get_schemes_datastore,
-    router,
-)
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "backend"))
+
+try:
+    from app.api.v1.endpoints.recommend_router import (
+        DEFAULT_SCHEMES_CATALOG,
+        RecommendationResponse,
+        UserProfile,
+        get_recommendations,
+        get_schemes_datastore,
+        router,
+    )
+except ImportError:
+    from router import (  # type: ignore[no-redef]
+        DEFAULT_SCHEMES_CATALOG,
+        RecommendationResponse,
+        UserProfile,
+        get_recommendations,
+        get_schemes_datastore,
+        router,
+    )
 
 
 class TestRouter(unittest.TestCase):

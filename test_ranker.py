@@ -18,22 +18,38 @@ Tests:
    - Non-destructive operation
 """
 
+import os
 import sys
 import unittest
 from dataclasses import dataclass
 from typing import Any, Dict, List
 
-from ranker import (
-    CONFIDENCE_HIGH_THRESHOLD,
-    CONFIDENCE_MEDIUM_THRESHOLD,
-    DEFAULT_WEIGHTS,
-    ScoringWeights,
-    UserProfile,
-    calculate_confidence,
-    format_indian_currency,
-    rank_schemes,
-    score_scheme,
-)
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "backend"))
+
+try:
+    from app.services.ranker import (
+        CONFIDENCE_HIGH_THRESHOLD,
+        CONFIDENCE_MEDIUM_THRESHOLD,
+        DEFAULT_WEIGHTS,
+        ScoringWeights,
+        UserProfile,
+        calculate_confidence,
+        format_indian_currency,
+        rank_schemes,
+        score_scheme,
+    )
+except ImportError:
+    from ranker import (  # type: ignore[no-redef]
+        CONFIDENCE_HIGH_THRESHOLD,
+        CONFIDENCE_MEDIUM_THRESHOLD,
+        DEFAULT_WEIGHTS,
+        ScoringWeights,
+        UserProfile,
+        calculate_confidence,
+        format_indian_currency,
+        rank_schemes,
+        score_scheme,
+    )
 
 
 class TestCurrencyFormatter(unittest.TestCase):

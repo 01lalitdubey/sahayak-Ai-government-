@@ -18,23 +18,41 @@ import json
 import unittest
 from typing import Any, Dict, List, Optional
 
+import os
+import sys
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "backend"))
+
 try:
     import pytest
 except ImportError:
     pytest = None  # type: ignore
 
 # ── Imports from our modules ─────────────────────────────────────────────────
-from ranker import UserProfile as RankerProfile
-from recommender import recommend_schemes
-from fallback_engine import find_closest_schemes
-from router import (
-    DEFAULT_SCHEMES_CATALOG,
-    RecommendationResponse,
-    UserProfile,
-    get_recommendations,
-    get_schemes_datastore,
-    router,
-)
+try:
+    from app.services.ranker import UserProfile as RankerProfile
+    from app.services.recommender import recommend_schemes
+    from app.services.fallback_engine import find_closest_schemes
+    from app.api.v1.endpoints.recommend_router import (
+        DEFAULT_SCHEMES_CATALOG,
+        RecommendationResponse,
+        UserProfile,
+        get_recommendations,
+        get_schemes_datastore,
+        router,
+    )
+except ImportError:
+    from ranker import UserProfile as RankerProfile  # type: ignore[no-redef]
+    from recommender import recommend_schemes  # type: ignore[no-redef]
+    from fallback_engine import find_closest_schemes  # type: ignore[no-redef]
+    from router import (  # type: ignore[no-redef]
+        DEFAULT_SCHEMES_CATALOG,
+        RecommendationResponse,
+        UserProfile,
+        get_recommendations,
+        get_schemes_datastore,
+        router,
+    )
 
 # ── FastAPI & TestClient Setup ───────────────────────────────────────────────
 try:

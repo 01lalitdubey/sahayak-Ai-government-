@@ -10,17 +10,30 @@ Tests:
 6. Robustness with Pydantic models, dataclasses, dicts, and missing fields.
 """
 
+import os
+import sys
 import unittest
 from dataclasses import dataclass
 from typing import Any, Dict, List
 
-from fallback_engine import (
-    CriterionViolation,
-    SchemeMismatchEvaluator,
-    find_closest_schemes,
-    format_missing_criteria_reason,
-)
-from ranker import UserProfile
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "backend"))
+
+try:
+    from app.services.fallback_engine import (
+        CriterionViolation,
+        SchemeMismatchEvaluator,
+        find_closest_schemes,
+        format_missing_criteria_reason,
+    )
+    from app.services.ranker import UserProfile
+except ImportError:
+    from fallback_engine import (  # type: ignore[no-redef]
+        CriterionViolation,
+        SchemeMismatchEvaluator,
+        find_closest_schemes,
+        format_missing_criteria_reason,
+    )
+    from ranker import UserProfile  # type: ignore[no-redef]
 
 
 class TestFallbackEngine(unittest.TestCase):
