@@ -4,7 +4,9 @@ Chat Schemas — Sahayak AI
 
 from pydantic import BaseModel, Field
 
+from app.models.enums import LanguageEnum
 from app.schemas.chat_history import ChatHistoryRead
+from app.schemas.common import SuccessResponse
 
 
 class ChatRequest(BaseModel):
@@ -15,7 +17,16 @@ class ChatRequest(BaseModel):
     )
 
 
-class ChatAskResponse(BaseModel):
-    success: bool = True
-    message: str = "OK"
-    data: ChatHistoryRead
+class TranscribeResult(BaseModel):
+    text: str = Field(description="Transcribed speech, in its original language/script")
+    detected_language: str = Field(description="Best-effort language code detected by the STT model")
+
+
+class SpeakRequest(BaseModel):
+    text: str = Field(min_length=1, max_length=5000)
+    language: LanguageEnum
+
+
+ChatAskResponse = SuccessResponse[ChatHistoryRead]
+ChatHistoryListResponse = SuccessResponse[list[ChatHistoryRead]]
+TranscribeResponse = SuccessResponse[TranscribeResult]

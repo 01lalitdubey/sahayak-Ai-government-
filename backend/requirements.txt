@@ -40,4 +40,5 @@ accelerate==1.2.1
 
 # ── AI Chat (RAG Assistant) ─────────────────────────────────────
 groq==1.6.0
+gTTS==2.5.4
 

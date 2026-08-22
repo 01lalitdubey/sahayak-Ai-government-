@@ -60,6 +60,8 @@ class Settings(BaseSettings):
     # ── AI Chat (RAG Assistant) ──────────────────────────────────────────
     GROQ_API_KEY: str = Field(default="")
     GROQ_CHAT_MODEL: str = Field(default="openai/gpt-oss-20b")
+    GROQ_STT_MODEL: str = Field(default="whisper-large-v3")
+    CHAT_MAX_AUDIO_UPLOAD_MB: int = Field(default=15)
 
     # ── Computed properties ───────────────────────────────────────────────
     @property

@@ -1,9 +1,10 @@
 """
 Chat Service — Sahayak AI
 ============================
-RAG-style conversational assistant over the schemes catalogue.
+RAG-style conversational assistant over the schemes catalogue, with optional
+speech input (STT) and speech output (TTS) — both opt-in per request.
 
-Pipeline:
+Text pipeline:
   1. Detect the user's language and translate their message to English (Groq).
   2. Search the schemes table (SchemeRepository.search) using the English text.
   3. Generate an answer in English from that context (Groq) — generation always
@@ -18,11 +19,22 @@ Pipeline:
 every Groq call: this is a reasoning model (openai/gpt-oss-20b) and on longer
 prompts it can burn its entire token budget on internal reasoning, leaving an
 empty or truncated `content` field otherwise.
+
+Speech:
+  - transcribe(): Groq's hosted Whisper (whisper-large-v3) turns an audio
+    recording into text, in whatever language it was spoken in.
+  - synthesize_speech(): gTTS renders answer text as MP3 audio. gTTS does not
+    support Odia or Assamese (Google Translate TTS has no voice for either),
+    so those two raise TTSUnsupportedLanguageException — callers should
+    disable/hide the "speak" option for those languages rather than degrade
+    to a mispronounced fallback voice.
 """
 
+import io
 import json
 import uuid
 
+from gtts import gTTS
 from groq import Groq
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -40,10 +52,41 @@ _MAX_CONTEXT_SCHEMES = 5
 _REASONING_EFFORT = "low"
 _MAX_COMPLETION_TOKENS = 4096
 
+# gTTS (Google Translate TTS) has no voice for these — see module docstring.
+TTS_UNSUPPORTED_LANGUAGES = {LanguageEnum.ODIA, LanguageEnum.ASSAMESE}
+
+# Groq/Whisper's transcription API returns a full language name (e.g. "English"),
+# not an ISO code — normalize it to our LanguageEnum codes for consistency with
+# the rest of the app. Falls back to the raw lowercased name if unrecognized.
+_WHISPER_LANGUAGE_NAME_TO_CODE = {
+    "english": "en",
+    "hindi": "hi",
+    "tamil": "ta",
+    "telugu": "te",
+    "bengali": "bn",
+    "bangla": "bn",
+    "marathi": "mr",
+    "gujarati": "gu",
+    "kannada": "kn",
+    "malayalam": "ml",
+    "punjabi": "pa",
+    "oriya": "or",
+    "odia": "or",
+    "assamese": "as",
+    "urdu": "ur",
+}
+
 
 class ChatServiceException(SahayakBaseException):
     status_code = 502
     message = "The chat assistant is temporarily unavailable. Please try again."
+
+
+class TTSUnsupportedLanguageException(SahayakBaseException):
+    status_code = 422
+
+    def __init__(self, language: LanguageEnum) -> None:
+        super().__init__(f"Voice output isn't available for {language.name.title()} yet.")
 
 
 def _format_context(schemes: list) -> str:
@@ -185,3 +228,33 @@ class ChatService:
         self, user_id: uuid.UUID, *, skip: int = 0, limit: int = 50
     ) -> list[ChatHistory]:
         return await self._chats.get_user_history(user_id, skip=skip, limit=limit)
+
+    # ── Speech ────────────────────────────────────────────────────────────
+
+    def transcribe(self, audio_bytes: bytes, filename: str) -> tuple[str, str]:
+        """Speech -> text. Returns (text, detected_language_code)."""
+        try:
+            response = self._client.audio.transcriptions.create(
+                file=(filename, audio_bytes),
+                model=settings.GROQ_STT_MODEL,
+                response_format="verbose_json",
+            )
+        except Exception as exc:
+            logger.error("Speech-to-text failed: %s", exc)
+            raise ChatServiceException() from exc
+
+        raw_language = (getattr(response, "language", None) or "en").strip().lower()
+        detected_code = _WHISPER_LANGUAGE_NAME_TO_CODE.get(raw_language, raw_language)
+        return response.text.strip(), detected_code
+
+    def synthesize_speech(self, text: str, language: LanguageEnum) -> bytes:
+        """Text -> MP3 audio bytes in the given language's native voice."""
+        if language in TTS_UNSUPPORTED_LANGUAGES:
+            raise TTSUnsupportedLanguageException(language)
+        try:
+            buffer = io.BytesIO()
+            gTTS(text=text, lang=language.value).write_to_fp(buffer)
+            return buffer.getvalue()
+        except Exception as exc:
+            logger.error("Text-to-speech failed: %s", exc)
+            raise ChatServiceException() from exc
