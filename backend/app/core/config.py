@@ -57,6 +57,10 @@ class Settings(BaseSettings):
     MODEL_CACHE_DIR: str = Field(default="models/indictrans2")
     TRANSLATION_MAX_RETRIES: int = Field(default=3)
 
+    # ── AI Chat (RAG Assistant) ──────────────────────────────────────────
+    GROQ_API_KEY: str = Field(default="")
+    GROQ_CHAT_MODEL: str = Field(default="openai/gpt-oss-20b")
+
     # ── Computed properties ───────────────────────────────────────────────
     @property
     def is_production(self) -> bool:
