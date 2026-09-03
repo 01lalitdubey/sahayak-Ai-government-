@@ -26,10 +26,13 @@ export const ragService = {
 
   /** Ask a text question. `language` is one of the 13 codes or "auto". */
   async ask(query: string, language: string): Promise<RagAnswer> {
-    const res = await apiClient.post<RagAnswer>(`${BASE}/query`, {
-      query,
-      language,
-    });
+    // The pipeline chains several Groq calls + TTS and can take 30-60s;
+    // override the client's default 15s timeout.
+    const res = await apiClient.post<RagAnswer>(
+      `${BASE}/query`,
+      { query, language },
+      { timeout: 120_000 },
+    );
     return res.data;
   },
 
@@ -41,7 +44,7 @@ export const ragService = {
     form.append("language", language);
     const res = await apiClient.post<RagAnswer>(`${BASE}/voice`, form, {
       headers: { "Content-Type": "multipart/form-data" },
-      timeout: 90_000,
+      timeout: 120_000,
     });
     return res.data;
   },
