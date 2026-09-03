@@ -122,6 +122,27 @@ class SchemeInactiveException(SahayakBaseException):
     message = "This scheme is inactive."
 
 
+# ── RAG / Voice assistant ────────────────────────────────────────────────
+class RagDisabledException(SahayakBaseException):
+    status_code = 503
+    message = "The AI assistant is not configured. Set GROQ_API_KEY on the server."
+
+
+class RagServiceException(SahayakBaseException):
+    status_code = 502
+    message = "The AI assistant is temporarily unavailable. Please try again."
+
+
+class RagIndexEmptyException(SahayakBaseException):
+    status_code = 409
+    message = "No scheme data has been indexed yet. Run POST /api/v1/rag/ingest first."
+
+
+class UnsupportedLanguageException(SahayakBaseException):
+    status_code = 400
+    message = "Unsupported language. Use one of the 13 supported codes or 'auto'."
+
+
 # ── Eligibility-specific ──────────────────────────────────────────────────
 class ProfileIncompleteException(SahayakBaseException):
     status_code = 422

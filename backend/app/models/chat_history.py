@@ -52,8 +52,11 @@ class ChatHistory(UUIDMixin, TimestampMixin, Base):
     )
 
     # ── Language ──────────────────────────────────────────────────────────
+    # values_callable → persist the enum *value* ("en", "hi", …) to match the
+    # existing `language_enum` DB type (same convention as scheme.py / user.py).
     language: Mapped[LanguageEnum] = mapped_column(
-        SAEnum(LanguageEnum, name="language_enum", create_type=True),
+        SAEnum(LanguageEnum, name="language_enum", create_type=True,
+               values_callable=lambda obj: [e.value for e in obj]),
         nullable=False,
         default=LanguageEnum.ENGLISH,
         server_default="en",

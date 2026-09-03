@@ -57,11 +57,46 @@ class Settings(BaseSettings):
     MODEL_CACHE_DIR: str = Field(default="models/indictrans2")
     TRANSLATION_MAX_RETRIES: int = Field(default=3)
 
-    # ── AI Chat (RAG Assistant) ──────────────────────────────────────────
+    # ── RAG / Voice Assistant (Groq + ChromaDB + all-MiniLM-L6-v2) ─────────
+    # Groq hosts Whisper (ASR) and gpt-oss (translation + answers) behind an
+    # OpenAI-compatible REST API. A single API key drives all of it.
     GROQ_API_KEY: str = Field(default="")
-    GROQ_CHAT_MODEL: str = Field(default="openai/gpt-oss-20b")
-    GROQ_STT_MODEL: str = Field(default="whisper-large-v3")
-    CHAT_MAX_AUDIO_UPLOAD_MB: int = Field(default=15)
+    GROQ_BASE_URL: str = Field(default="https://api.groq.com/openai/v1")
+    GROQ_WHISPER_MODEL: str = Field(default="whisper-large-v3")
+    # Query→English translation for retrieval. gpt-oss handles all 13 languages
+    # well; allam-2-7b does NOT (Arabic-only) and produces degenerate Indic output.
+    GROQ_TRANSLATION_MODEL: str = Field(default="openai/gpt-oss-20b")
+    # Answers are generated DIRECTLY in the resolved language by this model.
+    GROQ_ANSWER_MODEL: str = Field(default="openai/gpt-oss-120b")
+    RAG_REQUEST_TIMEOUT: float = Field(default=60.0)
+
+    # Retrieval
+    RAG_EMBEDDING_MODEL: str = Field(default="sentence-transformers/all-MiniLM-L6-v2")
+    RAG_CHROMA_MODE: str = Field(default="local")  # local | persistent | http
+    RAG_CHROMA_PATH: str = Field(default="chroma_db")
+    RAG_CHROMA_HOST: str = Field(default="localhost")
+    RAG_CHROMA_PORT: int = Field(default=8001)
+    RAG_COLLECTION: str = Field(default="sahayak_schemes")
+    RAG_TOP_K: int = Field(default=3)
+    RAG_MAX_QUERY_CHARS: int = Field(default=1000)
+    RAG_MIN_SCORE: float = Field(default=0.0)  # cosine similarity floor (0 = keep all)
+
+    # Voice
+    RAG_ENABLE_ASR: bool = Field(default=True)
+    RAG_ENABLE_TTS: bool = Field(default=True)
+    RAG_AUDIO_DIR: str = Field(default="app/static/rag_audio")
+    RAG_AUDIO_TTL_MINUTES: int = Field(default=120)
+
+    # TTS provider routing:
+    #   "auto" — gTTS where it has a voice, MMS (facebook/mms-tts-*) otherwise
+    #            and always as a fallback → every one of the 13 languages speaks
+    #   "gtts" — gTTS first, MMS fallback (keeps Odia/Assamese working)
+    #   "mms"  — offline MMS VITS for all 13 (no request-time internet)
+    RAG_TTS_PROVIDER: str = Field(default="auto")
+    RAG_TTS_MMS_CACHE_DIR: str = Field(default=".cache/hf_tts")
+    RAG_TTS_MMS_MAX_MODELS: int = Field(default=6)   # LRU cap on loaded VITS models
+    RAG_TTS_MAX_CHARS: int = Field(default=1200)     # answer text cap fed to TTS
+    RAG_TTS_RETRIES: int = Field(default=3)
 
     # ── Computed properties ───────────────────────────────────────────────
     @property
@@ -78,6 +113,11 @@ class Settings(BaseSettings):
         if self.DATABASE_ECHO:
             return True
         return self.is_development
+
+    @property
+    def rag_enabled(self) -> bool:
+        """RAG needs a Groq API key to reach Whisper / allam / gpt-oss."""
+        return bool(self.GROQ_API_KEY and self.GROQ_API_KEY.strip())
 
 
 @lru_cache(maxsize=1)

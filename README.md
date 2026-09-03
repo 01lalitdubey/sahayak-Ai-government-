@@ -17,6 +17,7 @@
 | **Standalone Schema & Ingestion Suite** | ✅ Complete | `schemas.py`, `api_loader.py`, `filter_engine.py` (Pydantic v2) |
 | **Eligibility & Recommendation Engine** | ✅ Complete | Deterministic rule matching engine + smart profile-based recommendations |
 | **Translation & Localization (TMS)** | ✅ Complete | Translation Management System + IndicTransToolkit support |
+| **RAG Voice Assistant** | ✅ Complete | Whisper → language resolution → gpt-oss-20b → all-MiniLM-L6-v2 → ChromaDB → eligibility rules → gpt-oss-120b → gTTS, across 13 languages + auto-detect. See [`docs/RAG.md`](docs/RAG.md) |
 | **Citizen & Admin Portals** | ✅ Complete | Localized citizen web app & administrative analytics dashboard |
 
 ---
