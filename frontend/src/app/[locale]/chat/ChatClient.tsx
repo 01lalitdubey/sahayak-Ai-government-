@@ -183,7 +183,7 @@ export function ChatClient() {
   }, [language, askVoice, pushAnswer, pushError]);
 
   const stopRecording = useCallback(() => {
-    mediaRef.current?.state === "recording" && mediaRef.current.stop();
+    if (mediaRef.current?.state === "recording") mediaRef.current.stop();
   }, []);
 
   const disabled = health && !health.rag_enabled;

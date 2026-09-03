@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { logger } from "@/lib/logger";
 import { TranslationTable } from "@/components/admin/tms/TranslationTable";
 import { adminTmsApi } from "@/lib/api/admin-tms";
 import type { TranslationAnalytics } from "@/lib/api/admin-tms";
@@ -18,7 +19,7 @@ export default function AdminTMSPage() {
         const data = await adminTmsApi.getAnalytics();
         setAnalytics(data);
       } catch (e) {
-        console.error("Failed to load analytics", e);
+        logger.error("Failed to load analytics", e);
       } finally {
         setLoading(false);
       }

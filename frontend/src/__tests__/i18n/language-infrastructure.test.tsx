@@ -1,12 +1,13 @@
 import "@testing-library/jest-dom";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { useLanguageStore } from "@/store/language-store";
+import { useLanguageStore, AVAILABLE_LANGUAGES } from "@/store/language-store";
 import { LanguageSwitcher } from "@/components/language/LanguageSwitcher";
 import { useLanguage } from "@/hooks/useLanguage";
 
 // Mock the next-intl hooks and our routing
 jest.mock("next-intl", () => ({
   useLocale: () => "en",
+  useTranslations: () => (key: string) => key,
 }));
 
 const mockRouterReplace = jest.fn();
@@ -52,8 +53,9 @@ describe("Multilingual Infrastructure", () => {
     it("should provide current language and available languages", () => {
       render(<HookTestComponent />);
       expect(screen.getByTestId("current-lang")).toHaveTextContent("en");
-      // Assuming 12 languages are in the store
-      expect(screen.getByTestId("available-count")).toHaveTextContent("12");
+      expect(screen.getByTestId("available-count")).toHaveTextContent(
+        String(AVAILABLE_LANGUAGES.length),
+      );
     });
 
     it("should call router.replace when language is changed", () => {

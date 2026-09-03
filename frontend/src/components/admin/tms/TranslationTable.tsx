@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { logger } from "@/lib/logger";
 import {
   Table,
   TableBody,
@@ -35,7 +36,7 @@ export function TranslationTable() {
       const data = await adminTmsApi.getTranslations(params);
       setTranslations(data.items);
     } catch (e) {
-      console.error(e);
+      logger.error(e);
     } finally {
       setLoading(false);
     }
@@ -72,7 +73,7 @@ export function TranslationTable() {
       setSelectedIds(new Set());
       loadTranslations();
     } catch (e) {
-      console.error(e);
+      logger.error(e);
       toast("Failed to approve translations");
     }
   };
@@ -85,7 +86,7 @@ export function TranslationTable() {
       setSelectedIds(new Set());
       loadTranslations();
     } catch (e) {
-      console.error(e);
+      logger.error(e);
       toast("Failed to publish translations");
     }
   };

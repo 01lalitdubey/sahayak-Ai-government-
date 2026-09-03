@@ -13,6 +13,11 @@ import axios, {
 } from "axios";
 import { API_BASE_URL } from "@/lib/constants";
 import { tokenStorage } from "@/lib/token-storage";
+import { locales } from "@/i18n/routing";
+
+// Locale prefixes that appear in the URL path (every supported locale except
+// the default "en", which is served without a prefix).
+const PREFIXED_LOCALES: readonly string[] = locales.filter((l) => l !== "en");
 
 // Flag to prevent multiple concurrent refresh calls
 let _isRefreshing = false;
@@ -51,9 +56,8 @@ apiClient.interceptors.request.use(
     // URL pattern: /hi/schemes, /ta/schemes, /en/schemes, or /schemes (default en)
     if (typeof window !== "undefined") {
       const pathLocale = window.location.pathname.split("/")[1];
-      // Check if the first path segment is a known locale
-      const knownLocales = ["hi", "ta", "te", "mr", "gu", "bn", "kn", "ml", "pa", "or", "as", "ur"];
-      if (pathLocale && knownLocales.includes(pathLocale)) {
+      // Check if the first path segment is a known locale prefix
+      if (pathLocale && PREFIXED_LOCALES.includes(pathLocale)) {
         config.headers["Accept-Language"] = pathLocale;
       } else {
         // Fallback: check NEXT_LOCALE cookie

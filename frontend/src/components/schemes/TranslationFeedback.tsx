@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { logger } from "@/lib/logger";
 import { useLocale } from "next-intl";
 import { ThumbsUp, ThumbsDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -39,7 +40,7 @@ export function TranslationFeedback({ schemeId }: TranslationFeedbackProps) {
       setSubmitted(true);
       toast("Thank you for your feedback!");
     } catch (e) {
-      console.error(e);
+      logger.error(e);
       toast("Failed to submit feedback. Please try again.");
     } finally {
       setLoading(false);

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { logger } from "@/lib/logger";
 import { adminTmsApi } from "@/lib/api/admin-tms";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -36,7 +37,7 @@ export default function TranslationExecutionDashboard() {
       const p = await adminTmsApi.getProgress();
       setProgress(p as ProgressData);
     } catch {
-      console.error("Failed to load progress");
+      logger.error("Failed to load progress");
     }
   };
 
@@ -45,7 +46,7 @@ export default function TranslationExecutionDashboard() {
       const h = await adminTmsApi.getHealth();
       setHealth(h as HealthData);
     } catch {
-      console.error("Failed to load health");
+      logger.error("Failed to load health");
     }
   };
 

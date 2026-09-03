@@ -15,12 +15,8 @@ const nextConfig: NextConfig = {
     ],
   },
 
-  // ── Environment variables exposed to the browser ────────────────────────
-  // Prefix with NEXT_PUBLIC_ for client-side availability
-  env: {
-    NEXT_PUBLIC_APP_NAME: process.env["NEXT_PUBLIC_APP_NAME"] ?? "Sahayak AI",
-    NEXT_PUBLIC_APP_VERSION: process.env["NEXT_PUBLIC_APP_VERSION"] ?? "0.1.0",
-  },
+  // NEXT_PUBLIC_-prefixed vars are exposed to the browser automatically;
+  // defaults live at the point of use in src/lib/constants.ts.
 
   // ── Redirect / Rewrite rules ─────────────────────────────────────────────
   async redirects() {

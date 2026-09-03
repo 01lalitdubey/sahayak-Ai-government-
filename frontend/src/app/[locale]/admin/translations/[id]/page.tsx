@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { logger } from "@/lib/logger";
 import { useRouter, useParams } from "next/navigation";
 import { adminTmsApi } from "@/lib/api/admin-tms";
 import type { TranslationTMSDetail, TranslationHistory } from "@/lib/api/admin-tms";
@@ -29,7 +30,7 @@ export default function TranslationReviewPage() {
         setTranslation(data);
         setEditedContent(data.translated_content);
       } catch (e) {
-        console.error(e);
+        logger.error(e);
         toast("Failed to load translation");
       } finally {
         setLoading(false);
@@ -46,7 +47,7 @@ export default function TranslationReviewPage() {
       setTranslation(updated);
       toast("Translation updated successfully");
     } catch (e) {
-      console.error(e);
+      logger.error(e);
       toast("Failed to update translation");
     }
   };
