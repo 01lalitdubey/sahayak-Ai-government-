@@ -1,0 +1,20 @@
+# Normalise line endings: LF in the repo, native on checkout.
+* text=auto eol=lf
+
+# Explicitly binary (never touch EOLs / never diff as text).
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.woff binary
+*.woff2 binary
+*.mp3 binary
+*.wav binary
+*.safetensors binary
+*.bin binary
+
+# Shell / PowerShell scripts keep their platform's endings.
+*.sh text eol=lf
+*.ps1 text eol=crlf
