@@ -14,7 +14,11 @@ export const locales = [
   "pa",
   "or",
   "as",
+  "ur",
 ] as const;
+
+/** Right-to-left locales (Urdu). Used for `dir` attributes. */
+export const rtlLocales: readonly string[] = ["ur"];
 
 export type Locale = (typeof locales)[number];
 

@@ -52,7 +52,7 @@ apiClient.interceptors.request.use(
     if (typeof window !== "undefined") {
       const pathLocale = window.location.pathname.split("/")[1];
       // Check if the first path segment is a known locale
-      const knownLocales = ["hi", "ta", "te", "mr", "gu", "bn", "kn", "ml", "pa", "or", "as"];
+      const knownLocales = ["hi", "ta", "te", "mr", "gu", "bn", "kn", "ml", "pa", "or", "as", "ur"];
       if (pathLocale && knownLocales.includes(pathLocale)) {
         config.headers["Accept-Language"] = pathLocale;
       } else {

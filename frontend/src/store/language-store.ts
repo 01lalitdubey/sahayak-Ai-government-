@@ -20,6 +20,7 @@ export const AVAILABLE_LANGUAGES: LanguageInfo[] = [
   { code: "pa", nativeName: "ਪੰਜਾਬੀ" },
   { code: "or", nativeName: "ଓଡ଼ିଆ" },
   { code: "as", nativeName: "অসমীয়া" },
+  { code: "ur", nativeName: "اردو" },
 ];
 
 interface LanguageState {
