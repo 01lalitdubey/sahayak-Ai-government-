@@ -6,8 +6,14 @@ All secrets loaded from environment variables / .env file.
 """
 
 from functools import lru_cache
-from pydantic import Field
+from pydantic import Field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+# SECRET_KEY values that ship in the repo / examples and must never reach a
+# real deployment. Matched case-insensitively; any value containing one of
+# these substrings is treated as a placeholder.
+_PLACEHOLDER_SECRET_MARKERS = ("change-me", "change-this", "your-super-secret", "secret-key")
+_MIN_SECRET_KEY_LENGTH = 32
 
 
 class Settings(BaseSettings):
@@ -98,6 +104,35 @@ class Settings(BaseSettings):
     RAG_TTS_MAX_CHARS: int = Field(default=1200)     # answer text cap fed to TTS
     RAG_TTS_RETRIES: int = Field(default=3)
 
+    # ── Validation ───────────────────────────────────────────────────────
+    @model_validator(mode="after")
+    def _validate_secret_key(self) -> "Settings":
+        """
+        Refuse to start with an unsafe SECRET_KEY:
+          - never allow an empty key (any environment)
+          - outside development, reject the shipped placeholders and any
+            key shorter than 32 characters
+        Tokens are signed with this key; a guessable one lets anyone mint
+        valid admin sessions.
+        """
+        key = (self.SECRET_KEY or "").strip()
+        if not key:
+            raise ValueError("SECRET_KEY must be set (see backend/.env.example).")
+
+        if self.APP_ENV.lower() != "development":
+            lowered = key.lower()
+            if any(marker in lowered for marker in _PLACEHOLDER_SECRET_MARKERS):
+                raise ValueError(
+                    f"SECRET_KEY is still a placeholder in APP_ENV={self.APP_ENV!r}. "
+                    'Generate one: python -c "import secrets; print(secrets.token_urlsafe(48))"'
+                )
+            if len(key) < _MIN_SECRET_KEY_LENGTH:
+                raise ValueError(
+                    f"SECRET_KEY must be at least {_MIN_SECRET_KEY_LENGTH} characters "
+                    f"in APP_ENV={self.APP_ENV!r} (got {len(key)})."
+                )
+        return self
+
     # ── Computed properties ───────────────────────────────────────────────
     @property
     def is_production(self) -> bool:
@@ -116,7 +151,7 @@ class Settings(BaseSettings):
 
     @property
     def rag_enabled(self) -> bool:
-        """RAG needs a Groq API key to reach Whisper / allam / gpt-oss."""
+        """RAG needs a Groq API key to reach Whisper / gpt-oss."""
         return bool(self.GROQ_API_KEY and self.GROQ_API_KEY.strip())
 
 
