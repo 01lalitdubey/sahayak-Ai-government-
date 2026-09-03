@@ -104,6 +104,10 @@ class Settings(BaseSettings):
     RAG_TTS_MAX_CHARS: int = Field(default=1200)     # answer text cap fed to TTS
     RAG_TTS_RETRIES: int = Field(default=3)
 
+    # Per-user rate limit on the (auth-only) /rag/query and /rag/voice
+    # endpoints — each Groq round trip costs money. slowapi syntax.
+    RAG_RATE_LIMIT: str = Field(default="30/minute")
+
     # ── Validation ───────────────────────────────────────────────────────
     @model_validator(mode="after")
     def _validate_secret_key(self) -> "Settings":

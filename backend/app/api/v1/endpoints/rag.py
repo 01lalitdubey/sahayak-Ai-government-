@@ -1,33 +1,29 @@
 """
 RAG / Voice Assistant Endpoints — Sahayak AI
 ============================================
-Public:
+Public (no auth):
     GET  /api/v1/rag/languages       — the 13 supported languages + 'auto'
     GET  /api/v1/rag/health          — pipeline configuration / index status
+    GET  /api/v1/rag/audio/{name}    — fetch a generated TTS clip (mp3 or wav)
+Authenticated + rate-limited (settings.RAG_RATE_LIMIT per user):
     POST /api/v1/rag/query           — text question  → localized answer + sources
     POST /api/v1/rag/voice           — speech question → localized answer + sources + audio
-    GET  /api/v1/rag/audio/{name}    — fetch a generated TTS clip (mp3 or wav)
 Admin:
     POST /api/v1/rag/ingest          — (re)build the ChromaDB scheme index
 
-Auth is OPTIONAL on /query and /voice: anonymous users get answers without
-personalised eligibility; signed-in users additionally get deterministic
-eligibility results folded into the answer and the sources.
+/query and /voice require a signed-in user: every call spends Groq credits,
+and the caller's deterministic eligibility results are folded into the answer.
 """
 
-from __future__ import annotations
-
-import uuid
-
-from fastapi import APIRouter, Depends, Form, UploadFile, File, status
+from fastapi import APIRouter, Depends, Form, Request, UploadFile, File, status
 from fastapi.responses import FileResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.auth.dependencies import oauth2_scheme, require_admin
-from app.auth.token import verify_access_token, extract_user_id
+from app.auth.dependencies import get_current_active_user, require_admin
 from app.core.config import settings
 from app.core.exceptions import RagDisabledException, ValidationException
 from app.core.logging import get_logger
+from app.core.ratelimit import limiter
 from app.database.database import get_db
 from app.models.user import User
 from app.schemas.rag import (
@@ -46,19 +42,6 @@ logger = get_logger(__name__)
 router = APIRouter(prefix="/rag", tags=["RAG Assistant"])
 
 _MAX_AUDIO_BYTES = 25 * 1024 * 1024  # Groq Whisper hard limit
-
-
-async def get_optional_user_id(
-    token: str | None = Depends(oauth2_scheme),
-) -> uuid.UUID | None:
-    """Resolve the caller's user id from a Bearer token if present; never 401."""
-    if not token:
-        return None
-    try:
-        payload = verify_access_token(token)
-        return uuid.UUID(extract_user_id(payload))
-    except Exception:  # noqa: BLE001 - anonymous is a valid state here
-        return None
 
 
 # ── Metadata endpoints ─────────────────────────────────────────────────────
@@ -113,9 +96,11 @@ async def rag_health() -> RagHealthResponse:
 # ── Query endpoints ────────────────────────────────────────────────────────
 
 @router.post("/query", response_model=RagAnswerResponse, summary="Ask a text question")
+@limiter.limit(lambda: settings.RAG_RATE_LIMIT)
 async def rag_query(
+    request: Request,
     payload: RagQueryRequest,
-    user_id: uuid.UUID | None = Depends(get_optional_user_id),
+    current_user: User = Depends(get_current_active_user),
     db: AsyncSession = Depends(get_db),
 ) -> RagAnswerResponse:
     if not settings.rag_enabled:
@@ -123,16 +108,18 @@ async def rag_query(
     result = await RagPipeline(db).run(
         query_text=payload.query,
         requested_language=payload.language,
-        user_id=user_id,
+        user_id=current_user.id,
     )
     return RagAnswerResponse(**result.to_dict())
 
 
 @router.post("/voice", response_model=RagAnswerResponse, summary="Ask a spoken question")
+@limiter.limit(lambda: settings.RAG_RATE_LIMIT)
 async def rag_voice(
+    request: Request,
     audio: UploadFile = File(..., description="Audio clip (webm/ogg/mp3/wav/m4a)"),
     language: str = Form("auto", description="Answer/TTS language code or 'auto'"),
-    user_id: uuid.UUID | None = Depends(get_optional_user_id),
+    current_user: User = Depends(get_current_active_user),
     db: AsyncSession = Depends(get_db),
 ) -> RagAnswerResponse:
     if not settings.rag_enabled:
@@ -148,7 +135,7 @@ async def rag_voice(
         audio=raw,
         audio_filename=audio.filename or "audio.webm",
         requested_language=language,
-        user_id=user_id,
+        user_id=current_user.id,
     )
     return RagAnswerResponse(**result.to_dict())
 

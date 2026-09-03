@@ -11,9 +11,11 @@ from typing import AsyncGenerator
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from slowapi.errors import RateLimitExceeded
 from sqlalchemy.exc import IntegrityError, OperationalError, TimeoutError
 
 from app.core.config import settings
+from app.core.ratelimit import limiter
 from app.core.logging import configure_logging, get_logger
 from app.core.exception_handlers import (
     sahayak_exception_handler,
@@ -23,6 +25,19 @@ from app.core.exception_handlers import (
     unhandled_exception_handler,
 )
 from app.core.exceptions import SahayakBaseException
+
+
+async def rate_limit_handler(request: Request, exc: RateLimitExceeded) -> JSONResponse:
+    """Render slowapi's 429 in the app's standard error envelope."""
+    logger.warning("Rate limit hit on %s %s: %s", request.method, request.url.path, exc.detail)
+    return JSONResponse(
+        status_code=429,
+        content={
+            "success": False,
+            "message": f"Too many requests ({exc.detail}). Please slow down and retry.",
+            "status_code": 429,
+        },
+    )
 from app.database.database import init_db, close_db
 from app.middleware.request_logger import RequestLoggerMiddleware
 from app.api.v1.router import api_router
@@ -77,8 +92,12 @@ def create_application() -> FastAPI:
     # ── Custom middleware ──────────────────────────────────────────────────
     app.add_middleware(RequestLoggerMiddleware)
 
+    # ── Rate limiting (slowapi) ───────────────────────────────────────────
+    app.state.limiter = limiter
+
     # ── Exception handlers ─────────────────────────────────────────────────
     # Order matters: most specific first, catch-all last
+    app.add_exception_handler(RateLimitExceeded, rate_limit_handler)                     # type: ignore[arg-type]
     app.add_exception_handler(SahayakBaseException, sahayak_exception_handler)          # type: ignore[arg-type]
     app.add_exception_handler(IntegrityError, sqlalchemy_integrity_handler)              # type: ignore[arg-type]
     app.add_exception_handler(OperationalError, sqlalchemy_operational_handler)          # type: ignore[arg-type]
