@@ -22,7 +22,11 @@
     "admin": "అడ్మిన్",
     "sign_out": "సైన్ అవుట్",
     "login": "సైన్ ఇన్",
-    "register": "నమోదు చేయి"
+    "register": "నమోదు చేయి",
+    "recommendations": "సిఫార్సులు",
+    "logout": "సైన్ అవుట్",
+    "manage_schemes": "పథకాలను నిర్వహించండి",
+    "profile": "ప్రొఫైల్"
   },
   "footer": {
     "product": "ఉత్పత్తి",

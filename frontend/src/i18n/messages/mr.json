@@ -22,7 +22,11 @@
     "admin": "प्रशासक",
     "sign_out": "साइन आउट",
     "login": "साइन इन",
-    "register": "नोंदणी करा"
+    "register": "नोंदणी करा",
+    "recommendations": "शिफारसी",
+    "logout": "साइन आउट",
+    "manage_schemes": "योजना व्यवस्थापित करा",
+    "profile": "प्रोफाइल"
   },
   "footer": {
     "product": "उत्पादन",

@@ -22,7 +22,11 @@
     "admin": "അഡ്മിൻ",
     "sign_out": "സൈൻ ഔട്ട്",
     "login": "സൈൻ ഇൻ",
-    "register": "രജിസ്റ്റർ ചെയ്യുക"
+    "register": "രജിസ്റ്റർ ചെയ്യുക",
+    "recommendations": "ശുപാർശകൾ",
+    "logout": "സൈൻ ഔട്ട്",
+    "manage_schemes": "പദ്ധതികൾ കൈകാര്യം ചെയ്യുക",
+    "profile": "പ്രൊഫൈൽ"
   },
   "footer": {
     "product": "ഉൽപ്പന്നം",

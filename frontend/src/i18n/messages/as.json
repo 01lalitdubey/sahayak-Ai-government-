@@ -22,7 +22,11 @@
     "admin": "এডমিন",
     "sign_out": "চাইন আউট",
     "login": "চাইন ইন",
-    "register": "পঞ্জীয়ন কৰক"
+    "register": "পঞ্জীয়ন কৰক",
+    "recommendations": "পৰামৰ্শ",
+    "logout": "ছাইন আউট",
+    "manage_schemes": "আঁচনি পৰিচালনা",
+    "profile": "প্ৰ'ফাইল"
   },
   "footer": {
     "product": "পণ্য",

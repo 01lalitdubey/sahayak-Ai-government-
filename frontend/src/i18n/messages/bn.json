@@ -22,7 +22,11 @@
     "admin": "অ্যাডমিন",
     "sign_out": "সাইন আউট",
     "login": "সাইন ইন",
-    "register": "নিবন্ধন করুন"
+    "register": "নিবন্ধন করুন",
+    "recommendations": "সুপারিশ",
+    "logout": "সাইন আউট",
+    "manage_schemes": "স্কিম পরিচালনা",
+    "profile": "প্রোফাইল"
   },
   "footer": {
     "product": "পণ্য",

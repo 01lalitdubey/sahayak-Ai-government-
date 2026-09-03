@@ -22,7 +22,11 @@
     "admin": "એડમિન",
     "sign_out": "સાઇન આઉટ",
     "login": "સાઇન ઇન",
-    "register": "નોંધણી કરો"
+    "register": "નોંધણી કરો",
+    "recommendations": "ભલામણો",
+    "logout": "સાઇન આઉટ",
+    "manage_schemes": "યોજનાઓ સંચાલિત કરો",
+    "profile": "પ્રોફાઇલ"
   },
   "footer": {
     "product": "ઉત્પાદન",

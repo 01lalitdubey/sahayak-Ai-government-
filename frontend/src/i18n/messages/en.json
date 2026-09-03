@@ -22,7 +22,11 @@
     "admin": "Admin",
     "sign_out": "Sign out",
     "login": "Sign in",
-    "register": "Register"
+    "register": "Register",
+    "recommendations": "Recommendations",
+    "logout": "Sign out",
+    "manage_schemes": "Manage Schemes",
+    "profile": "Profile"
   },
   "footer": {
     "product": "Product",

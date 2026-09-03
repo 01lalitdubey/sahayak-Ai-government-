@@ -22,7 +22,11 @@
     "admin": "ਐਡਮਿਨ",
     "sign_out": "ਸਾਈਨ ਆਊਟ",
     "login": "ਸਾਈਨ ਇਨ",
-    "register": "ਰਜਿਸਟਰ ਕਰੋ"
+    "register": "ਰਜਿਸਟਰ ਕਰੋ",
+    "recommendations": "ਸਿਫ਼ਾਰਸ਼ਾਂ",
+    "logout": "ਸਾਈਨ ਆਊਟ",
+    "manage_schemes": "ਸਕੀਮਾਂ ਦਾ ਪ੍ਰਬੰਧਨ ਕਰੋ",
+    "profile": "ਪ੍ਰੋਫ਼ਾਈਲ"
   },
   "footer": {
     "product": "ਉਤਪਾਦ",

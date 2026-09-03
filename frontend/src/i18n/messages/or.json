@@ -22,7 +22,11 @@
     "admin": "ଆଡ୍ମିନ",
     "sign_out": "ସାଇନ ଆଉଟ",
     "login": "ସାଇନ ଇନ",
-    "register": "ପଞ୍ଜୀକୃତ ହୁଅନ୍ତୁ"
+    "register": "ପଞ୍ଜୀକୃତ ହୁଅନ୍ତୁ",
+    "recommendations": "ପରାମର୍ଶ",
+    "logout": "ସାଇନ୍ ଆଉଟ୍",
+    "manage_schemes": "ଯୋଜନା ପରିଚାଳନା",
+    "profile": "ପ୍ରୋଫାଇଲ୍"
   },
   "footer": {
     "product": "ଉତ୍ପାଦ",

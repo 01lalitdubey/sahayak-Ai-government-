@@ -22,7 +22,11 @@
     "admin": "एडमिन",
     "sign_out": "साइन आउट",
     "login": "साइन इन",
-    "register": "रजिस्टर करें"
+    "register": "रजिस्टर करें",
+    "recommendations": "सिफ़ारिशें",
+    "logout": "साइन आउट",
+    "manage_schemes": "योजनाएँ प्रबंधित करें",
+    "profile": "प्रोफ़ाइल"
   },
   "footer": {
     "product": "उत्पाद",

@@ -22,7 +22,11 @@
     "admin": "ایڈمن",
     "sign_out": "سائن آؤٹ",
     "login": "سائن ان",
-    "register": "رجسٹر کریں"
+    "register": "رجسٹر کریں",
+    "recommendations": "سفارشات",
+    "logout": "سائن آؤٹ",
+    "manage_schemes": "اسکیمیں منظم کریں",
+    "profile": "پروفائل"
   },
   "footer": {
     "product": "پروڈکٹ",

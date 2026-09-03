@@ -22,7 +22,11 @@
     "admin": "நிர்வாகி",
     "sign_out": "வெளியேறு",
     "login": "உள்நுழை",
-    "register": "பதிவு செய்"
+    "register": "பதிவு செய்",
+    "recommendations": "பரிந்துரைகள்",
+    "logout": "வெளியேறு",
+    "manage_schemes": "திட்டங்களை நிர்வகிக்கவும்",
+    "profile": "சுயவிவரம்"
   },
   "footer": {
     "product": "தயாரிப்பு",

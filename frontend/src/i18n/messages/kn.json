@@ -22,7 +22,11 @@
     "admin": "ಅಡ್ಮಿನ್",
     "sign_out": "ಸೈನ್ ಔಟ್",
     "login": "ಸೈನ್ ಇನ್",
-    "register": "ನೋಂದಾಯಿಸಿ"
+    "register": "ನೋಂದಾಯಿಸಿ",
+    "recommendations": "ಶಿಫಾರಸುಗಳು",
+    "logout": "ಸೈನ್ ಔಟ್",
+    "manage_schemes": "ಯೋಜನೆಗಳನ್ನು ನಿರ್ವಹಿಸಿ",
+    "profile": "ಪ್ರೊಫೈಲ್"
   },
   "footer": {
     "product": "ಉತ್ಪನ್ನ",
