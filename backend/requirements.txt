@@ -38,7 +38,26 @@ sentencepiece==0.2.0
 huggingface-hub==0.27.0
 accelerate==1.2.1
 
-# ── AI Chat (RAG Assistant) ─────────────────────────────────────
-groq==1.6.0
-gTTS==2.5.4
+indic-nlp-library==0.92
+sacrebleu==2.5.1
+sacremoses==0.1.1
 
+# ── RAG / Voice Assistant ─────────────────────────────────────
+# Groq (Whisper + gpt-oss-20b + gpt-oss-120b) is reached over its
+# OpenAI-compatible REST API using httpx (already listed above) — no SDK.
+sentence-transformers==3.3.1     # all-MiniLM-L6-v2 embeddings
+langdetect==1.0.9                # text language auto-detection fallback
+numpy>=1.26                      # 'local' vector store + MMS-TTS WAV encoding
+
+# ── TTS (13-language voice output) ────────────────────────────
+# gTTS covers 11 languages; facebook/mms-tts-* (offline VITS, via the
+# transformers + torch already listed above) covers all 13 incl. Odia/Assamese
+# and is the fallback for the rest. No API key. Models (~145 MB each) download
+# on first use to RAG_TTS_MMS_CACHE_DIR.
+gTTS==2.5.4
+uroman==1.3.1.1                  # romanisation for any MMS checkpoint needing it
+# ChromaDB is OPTIONAL — only needed for RAG_CHROMA_MODE=persistent|http.
+# The default RAG_CHROMA_MODE=local uses the NumPy store above and needs nothing.
+# Uncomment for a real Chroma backend (Linux/manylinux wheels build cleanly;
+# Windows needs MSVC build tools for chroma-hnswlib):
+# chromadb==0.5.23
