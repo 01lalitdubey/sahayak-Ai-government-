@@ -2,6 +2,13 @@ import pytest
 import sys
 from unittest.mock import MagicMock, patch
 
+# QUARANTINED (see tests/conftest.py collect_ignore): this module assigns
+# sys.modules['torch'] / sys.modules['transformers'] at import time and never
+# restores them, contaminating every other test in the session. It also asserts
+# against a singleton API the provider no longer exposes (_instance /
+# _is_initialized). Needs a rewrite with proper monkeypatch fixtures before it
+# can be re-enabled.
+
 # Mock torch and transformers before importing the provider
 mock_torch = MagicMock()
 mock_torch.cuda.is_available.return_value = False

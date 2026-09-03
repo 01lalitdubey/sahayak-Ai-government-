@@ -33,6 +33,7 @@ slowapi==0.1.9
 # ── Dev / Testing ─────────────────────────────────────────────
 pytest==8.3.4
 pytest-asyncio==0.24.0
+pytest-xdist==3.8.0    # CI runs -n auto --dist loadfile for per-file isolation
 
 # ── AI / Translation ──────────────────────────────────────────
 torch==2.5.1

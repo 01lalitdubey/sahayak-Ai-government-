@@ -14,7 +14,6 @@
 | **PostgreSQL & Database Layer** | ✅ Complete | Async SQLAlchemy 2.0, asyncpg, Alembic migrations, Repositories |
 | **Auth & Profile Management** | ✅ Complete | JWT Auth, RBAC, User Profiles with strict validation |
 | **Scheme Ingestion & Management** | ✅ Complete | Government data import pipeline (data.gov.in / myScheme), Admin CRUD |
-| **Standalone Schema & Ingestion Suite** | ✅ Complete | `schemas.py`, `api_loader.py`, `filter_engine.py` (Pydantic v2) |
 | **Eligibility & Recommendation Engine** | ✅ Complete | Deterministic rule matching engine + smart profile-based recommendations |
 | **Translation & Localization (TMS)** | ✅ Complete | Translation Management System + IndicTransToolkit support |
 | **RAG Voice Assistant** | ✅ Complete | Whisper → language resolution → gpt-oss-20b → all-MiniLM-L6-v2 → ChromaDB → eligibility rules → gpt-oss-120b → gTTS, across 13 languages + auto-detect. See [`docs/RAG.md`](docs/RAG.md) |
@@ -54,7 +53,7 @@
 ## 📂 Repository Structure
 
 ```
-craftncode2/
+sahayak-ai/
 ├── frontend/                          # Next.js 15 Web Application
 │   └── src/
 │       ├── app/[locale]/              # Localized App Router pages
@@ -86,45 +85,19 @@ craftncode2/
 │   │   ├── models/                    # SQLAlchemy ORM models & enums
 │   │   ├── repositories/              # Async database repository pattern
 │   │   ├── schemas/                   # Pydantic v2 request & response schemas
-│   │   └── services/                  # Business logic (rule engine, auth, TMS, etc.)
+│   │   ├── government_data/           # data.gov.in / HuggingFace import clients
+│   │   └── services/                  # Business logic
+│   │       ├── rag/                   # RAG voice assistant pipeline (Groq + vector store)
+│   │       └── translation/           # IndicTrans2 translation provider + toolkit
 │   ├── alembic/                       # Database migrations
 │   └── requirements.txt               # Backend dependencies
 │
-├── schemas.py                         # Standalone Pydantic v2 schemas & enums
-├── api_loader.py                      # Standalone external API ingestion & normalizer
-├── filter_engine.py                   # Standalone deterministic eligibility filter engine
 ├── docker/                            # Dockerfiles & container assets
 ├── docs/                              # Architecture specs & project reports
 ├── scripts/                           # Setup and validation scripts
 ├── start.ps1                          # One-click startup script (PowerShell)
 └── docker-compose.yml                 # Full-stack container orchestration
 ```
-
----
-
-## ⚡ Standalone Core Processing Modules
-
-The root directory provides modular, self-contained Python modules for ingestion, validation, and deterministic filtering:
-
-### 1. `schemas.py`
-Defines standard domain enums and Pydantic v2 models:
-- **Enums**: `Gender`, `SocialCategory`, `Occupation`, `Education`, `FarmerStatus`, `MaritalStatus`.
-- **`UserProfile`**: Validates citizen profiles with boundary constraints (`0 <= age <= 120`, `annual_income >= 0`, `is_disabled`, `disability_type`, `disability_percentage`).
-- **`SchemeEligibilityRules`**: Handles criteria ranges and wildcards (`None` / `'any'`).
-- **`SchemeRecord`**: Parses and normalizes incoming external scheme payloads (both flat and nested).
-
-### 2. `api_loader.py`
-Fetches and normalizes scheme records from external government / portal APIs:
-- **`fetch_and_normalize_schemes(api_url, headers, timeout, skip_invalid)`** (Sync)
-- **`async_fetch_and_normalize_schemes(api_url, headers, timeout, skip_invalid)`** (Async)
-- Resilient error handling (`APITimeoutError`, `APINetworkError`, `APIMalformedPayloadError`).
-- Dynamic field alias mapping, currency string cleanup, and wildcard normalization.
-
-### 3. `filter_engine.py`
-Executes deterministic boolean evaluation across all criteria:
-- **`filter_eligible(profile: UserProfile, schemes: list[SchemeRecord]) -> list[SchemeRecord]`**
-- Evaluates age boundaries, income ceilings, occupation lists, farmer status, gender, state, and disability requirements.
-- Missing/null profile attributes are treated as **non-disqualifying** (plausible match).
 
 ---
 
@@ -202,14 +175,14 @@ docker compose up --build
 
 ### Backend & Unit Tests
 ```bash
-# Run standalone module self-tests
-python schemas.py
-python api_loader.py
-python filter_engine.py
-
-# Run FastAPI backend test suite
 cd backend
 pytest -v
+```
+
+### Frontend
+```bash
+cd frontend
+npm run lint && npm run type-check && npm test
 ```
 
 ---
@@ -238,10 +211,11 @@ NEXT_PUBLIC_APP_NAME=Sahayak AI
 
 ## 📄 Documentation
 
-For in-depth documentation, refer to the [`docs/`](file:///D:/vsc/craftncode2/docs) folder:
-- [**ARCHITECTURE.md**](file:///D:/vsc/craftncode2/docs/ARCHITECTURE.md): System architecture and data flow.
-- [**FULL_PROJECT_REPORT.md**](file:///D:/vsc/craftncode2/docs/FULL_PROJECT_REPORT.md): Comprehensive project implementation report.
-- [**MASTER_PROJECT_REPORT.md**](file:///D:/vsc/craftncode2/docs/MASTER_PROJECT_REPORT.md): Master technical specifications and evaluation metrics.
+For in-depth documentation, see the [`docs/`](docs/) folder:
+- [**ARCHITECTURE.md**](docs/ARCHITECTURE.md): System architecture and data flow.
+- [**RAG.md**](docs/RAG.md): RAG voice-assistant pipeline.
+- [**FULL_PROJECT_REPORT.md**](docs/FULL_PROJECT_REPORT.md): Comprehensive project implementation report.
+- [**MASTER_PROJECT_REPORT.md**](docs/MASTER_PROJECT_REPORT.md): Master technical specifications and evaluation metrics.
 
 ---
 
