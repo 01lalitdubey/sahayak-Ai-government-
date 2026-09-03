@@ -96,7 +96,11 @@ async def refresh(
 ) -> RefreshResponse:
     """
     Exchange a valid refresh token for a new access token + refresh token pair.
-    The old refresh token is invalidated (rotation).
+
+    NOTE: tokens are stateless JWTs with no server-side store, so the previous
+    refresh token stays valid until it expires — this is NOT true rotation.
+    TODO(auth): add a jti denylist (Redis) to enforce single-use refresh
+    tokens and support real logout / revocation.
     """
     service = AuthService(db)
     return await service.refresh(payload.refresh_token)
