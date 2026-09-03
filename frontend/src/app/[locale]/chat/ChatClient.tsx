@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useLocale } from "next-intl";
 import { Mic, Square, Send, Volume2, ExternalLink, Loader2, Languages } from "lucide-react";
 
 import { ragService } from "@/services/rag.service";
@@ -37,7 +36,6 @@ function uid() {
 }
 
 export function ChatClient() {
-  const locale = useLocale();
   const [language, setLanguage] = useState<string>("auto");
   const [input, setInput] = useState("");
   const [turns, setTurns] = useState<ChatTurn[]>([]);
@@ -53,10 +51,9 @@ export function ChatClient() {
   const ask = useAskRag();
   const askVoice = useAskRagVoice();
 
-  // Default the selector to the current UI locale on first mount.
-  useEffect(() => {
-    if (locale && STATIC_LANGS.some((l) => l.code === locale)) setLanguage(locale);
-  }, [locale]);
+  // Selector stays on "auto" by default: the answer language follows the
+  // language the question is written in (so a Telugu question -> Telugu answer),
+  // regardless of the site UI locale. The user can still force a language.
 
   const languages = useMemo(() => {
     const list = langData?.languages?.length
