@@ -75,6 +75,24 @@ htmlcov/
 *.bak
 *.tmp
 .cache/
+docs/_reconcile/
 
+# ---- ML models / large binaries (never commit — clone stays lean) ----
+models/
 backend/models/
 *.whl
+*.safetensors
+*.bin
+*.pt
+*.pth
+*.onnx
+*.gguf
+*.pkl
+
+# ---- RAG artifacts ----
+chroma_db/
+backend/chroma_db/
+backend/app/static/rag_audio/
+backend/.cache/hf_tts/
+*.mp3
+*.wav
